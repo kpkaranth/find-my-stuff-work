@@ -4,5 +4,6 @@ export interface Item {
   locationId: string;
   locationName: string;
   imageUri: string;
+  notes?: string;
   createdAt: string;
 }

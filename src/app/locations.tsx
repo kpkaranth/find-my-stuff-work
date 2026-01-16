@@ -1,7 +1,10 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-native';
 import { locations } from '@/store/mockStore';
+import { useState } from 'react';
 
 export default function LocationsScreen() {
+  const [newLoc, setNewLoc] = useState('');
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Locations</Text>
@@ -11,10 +14,21 @@ export default function LocationsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.name}>{item.name}</Text>
+            <Text>{item.name}</Text>
           </View>
         )}
       />
+
+      <TextInput
+        placeholder="Add new location"
+        value={newLoc}
+        onChangeText={setNewLoc}
+        style={styles.input}
+      />
+
+      <Pressable style={styles.addBtn}>
+        <Text style={{ color: '#fff', textAlign: 'center' }}>Add Location</Text>
+      </Pressable>
     </View>
   );
 }
@@ -28,5 +42,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  name: { fontSize: 16 },
+  input: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  addBtn: {
+    marginTop: 10,
+    padding: 14,
+    backgroundColor: '#2563eb',
+    borderRadius: 8,
+  },
 });
