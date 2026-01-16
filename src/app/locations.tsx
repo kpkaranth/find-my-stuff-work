@@ -1,34 +1,30 @@
-import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-native';
-import { locations } from '@/store/mockStore';
-import { useState } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { locations } from '../store/mockStore';
+
+const buildTree = (parentId: string | null, depth = 0) =>
+  locations
+    .filter(l => l.parentId === parentId)
+    .flatMap(l => [
+      { ...l, depth },
+      ...buildTree(l.id, depth + 1),
+    ]);
 
 export default function LocationsScreen() {
-  const [newLoc, setNewLoc] = useState('');
+  const tree = buildTree(null);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Locations</Text>
 
       <FlatList
-        data={locations}
-        keyExtractor={(item) => item.id}
+        data={tree}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <View style={[styles.card, { paddingLeft: 16 + item.depth * 16 }]}>
             <Text>{item.name}</Text>
           </View>
         )}
       />
-
-      <TextInput
-        placeholder="Add new location"
-        value={newLoc}
-        onChangeText={setNewLoc}
-        style={styles.input}
-      />
-
-      <Pressable style={styles.addBtn}>
-        <Text style={{ color: '#fff', textAlign: 'center' }}>Add Location</Text>
-      </Pressable>
     </View>
   );
 }
@@ -36,22 +32,5 @@ export default function LocationsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f3f4f6' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  card: {
-    backgroundColor: '#fff',
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 10,
-  },
-  addBtn: {
-    marginTop: 10,
-    padding: 14,
-    backgroundColor: '#2563eb',
-    borderRadius: 8,
-  },
+  card: { backgroundColor: '#fff', padding: 12, borderRadius: 8, marginBottom: 6 },
 });

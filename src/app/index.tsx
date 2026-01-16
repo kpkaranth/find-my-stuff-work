@@ -1,7 +1,7 @@
 import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { items } from '@/store/mockStore';
-import ItemCard from '@/components/ItemCard';
+import { items } from '../store/mockStore';
+import ItemCard from '../components/ItemCard';
 import { useState } from 'react';
 
 export default function HomeScreen() {
@@ -9,7 +9,8 @@ export default function HomeScreen() {
   const [query, setQuery] = useState('');
 
   const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(query.toLowerCase())
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
+    item.tags.some(t => t.toLowerCase().includes(query.toLowerCase()))
   );
 
   return (
@@ -21,7 +22,7 @@ export default function HomeScreen() {
       </Pressable>
 
       <TextInput
-        placeholder="Search items..."
+        placeholder="Search items or #tags"
         value={query}
         onChangeText={setQuery}
         style={styles.search}
@@ -52,19 +53,9 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f3f4f6' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  manageBtn: {
-    backgroundColor: '#e5e7eb',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
+  manageBtn: { backgroundColor: '#e5e7eb', padding: 10, borderRadius: 8, marginBottom: 10 },
   manageText: { fontWeight: '600' },
-  search: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
+  search: { backgroundColor: '#fff', padding: 12, borderRadius: 8, marginBottom: 12 },
   empty: { textAlign: 'center', marginTop: 40, color: '#6b7280' },
   fab: {
     position: 'absolute',
