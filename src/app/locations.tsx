@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { locations } from '../store/mockStore';
+import { locations } from '@/store/mockStore';
 
 const buildTree = (parentId: string | null, depth = 0) =>
   locations

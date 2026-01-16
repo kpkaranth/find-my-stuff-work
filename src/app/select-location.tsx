@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
-import { locations } from '../store/mockStore';
+import { locations } from '@/store/mockStore';
 import { useRouter } from 'expo-router';
 
 const buildTree = (parentId: string | null, depth = 0) =>

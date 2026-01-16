@@ -1,17 +1,22 @@
 import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { items } from '../store/mockStore';
-import ItemCard from '../components/ItemCard';
 import { useState } from 'react';
+
+import { items, locations } from '@/store/mockStore';
+import ItemCard from '@/components/ItemCard';
+import { getLocationPath } from '@/utils/locationUtils';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
 
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(query.toLowerCase()) ||
-    item.tags.some(t => t.toLowerCase().includes(query.toLowerCase()))
-  );
+  const filteredItems = items.filter(item => {
+    const q = query.toLowerCase();
+    return (
+      item.name.toLowerCase().includes(q) ||
+      item.tags.some(tag => tag.toLowerCase().includes(q))
+    );
+  });
 
   return (
     <View style={styles.container}>
@@ -37,6 +42,7 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <ItemCard
               item={item}
+              locationPath={getLocationPath(item.locationId, locations)}
               onPress={() => router.push(`/item/${item.id}`)}
             />
           )}
