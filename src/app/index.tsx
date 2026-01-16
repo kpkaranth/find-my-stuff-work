@@ -54,6 +54,14 @@ export default function Home() {
                     />
                 )}
             />
+
+            <Pressable
+                style={styles.fab}
+                onPress={() => router.push('/add-item')}
+            >
+                <Text style={styles.fabText}>＋</Text>
+            </Pressable>
+
         </View>
     );
 }
@@ -64,4 +72,26 @@ const styles = StyleSheet.create({
     manage: {backgroundColor: '#e5e7eb', padding: 10, borderRadius: 8, marginBottom: 8},
     manageText: {fontWeight: '600'},
     search: {backgroundColor: '#fff', padding: 12, borderRadius: 8},
+    fab: {
+        position: 'absolute',
+        right: 20,
+        bottom: 24,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#2563eb',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4, // Android
+        shadowColor: '#000', // iOS
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        shadowOffset: {width: 0, height: 2},
+    },
+    fabText: {
+        color: '#fff',
+        fontSize: 28,
+        lineHeight: 30,
+        fontWeight: '600',
+    },
 });

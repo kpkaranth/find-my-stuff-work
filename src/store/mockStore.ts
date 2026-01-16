@@ -52,6 +52,7 @@ export function updateLocation(
     name: string,
     parentId: string | null
 ) {
+  if (id === parentId) return;
   const loc = locations.find(l => l.id === id);
   if (!loc) return;
 
@@ -121,6 +122,8 @@ export const tags: Tag[] = [
 ];
 
 export function addTag(name: string, color?: string) {
+  if (!name.trim()) return;
+
   tags.push({
     id: 'tag-' + Math.random().toString(36).slice(2),
     name,
@@ -128,6 +131,7 @@ export function addTag(name: string, color?: string) {
     createdAt: now(),
     updatedAt: now(),
   });
+  return tags;
 }
 
 export function updateTag(id: string, name: string, color?: string) {
@@ -171,4 +175,20 @@ export function removeItemTag(itemId: string, tagId: string) {
   if (index !== -1) {
     itemTags.splice(index, 1);
   }
+}
+
+export function addItem(input: {
+  name: string;
+  notes?: string;
+  locationId: string;
+}) {
+  items.push({
+    id: 'item-' + Math.random().toString(36).slice(2),
+    name: input.name,
+    notes: input.notes,
+    locationId: input.locationId,
+    imageUri: 'https://via.placeholder.com/150',
+    createdAt: now(),
+    updatedAt: now(),
+  });
 }
