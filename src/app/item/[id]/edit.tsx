@@ -1,2 +1,2 @@
-import AddItemScreen from '@/app/add-item';
-export default AddItemScreen;
+import AddItem from '@/app/add-item';
+export default AddItem;

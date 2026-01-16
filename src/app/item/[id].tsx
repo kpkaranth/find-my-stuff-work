@@ -1,10 +1,10 @@
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { items, locations, tags, itemTags } from '@/store/mockStore';
 import { getLocationPath } from '@/utils/locationUtils';
 import { getTagsForItem } from '@/utils/tagUtils';
 
-export default function ItemDetailsScreen() {
+export default function ItemDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const item = items.find(i => i.id === id);
@@ -17,9 +17,7 @@ export default function ItemDetailsScreen() {
     <View style={styles.container}>
       <Image source={{ uri: item.imageUri }} style={styles.image} />
       <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.location}>
-        📍 {getLocationPath(item.locationId, locations)}
-      </Text>
+      <Text style={styles.location}>📍 {getLocationPath(item.locationId, locations)}</Text>
 
       <View style={styles.tags}>
         {resolvedTags.map(t => (

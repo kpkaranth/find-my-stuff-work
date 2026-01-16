@@ -1,22 +1,19 @@
 import { Location } from '@/models/Location';
 
-export function getLocationPath(locationId: string, locations: Location[]): string {
+export function getLocationPath(id: string, locations: Location[]): string {
   const map = new Map(locations.map(l => [l.id, l]));
   const path: string[] = [];
-  let current = map.get(locationId);
-
-  while (current) {
-    path.unshift(current.name);
-    current = current.parentId ? map.get(current.parentId) : undefined;
+  let cur = map.get(id);
+  while (cur) {
+    path.unshift(cur.name);
+    cur = cur.parentId ? map.get(cur.parentId) : undefined;
   }
-
   return path.join(' > ');
 }
 
-export function getDescendantLocationIds(locationId: string, locations: Location[]): string[] {
-  const result: string[] = [locationId];
-  locations
-    .filter(l => l.parentId === locationId && !l.isArchived)
-    .forEach(child => result.push(...getDescendantLocationIds(child.id, locations)));
+export function getDescendantLocationIds(id: string, locations: Location[]): string[] {
+  const result = [id];
+  locations.filter(l => l.parentId === id && !l.isArchived)
+    .forEach(c => result.push(...getDescendantLocationIds(c.id, locations)));
   return result;
 }
