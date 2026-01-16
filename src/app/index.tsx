@@ -2,7 +2,7 @@ import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-na
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 
-import { items, locations } from '@/store/mockStore';
+import { items, locations, tags, itemTags } from '@/store/mockStore';
 import ItemCard from '@/components/ItemCard';
 import { getLocationPath, getDescendantLocationIds } from '@/utils/locationUtils';
 
@@ -11,16 +11,16 @@ export default function HomeScreen() {
   const params = useLocalSearchParams<{ tag?: string; locationId?: string }>();
   const [query, setQuery] = useState('');
 
+  const tagId = params.tag ? tags.find(t => t.name === params.tag)?.id : null;
   const locationIds = params.locationId
     ? getDescendantLocationIds(params.locationId, locations)
     : null;
 
   const filteredItems = items.filter(item => {
-    const q = query.toLowerCase();
-    const matchesSearch =
-      item.name.toLowerCase().includes(q) ||
-      item.tags.some(t => t.toLowerCase().includes(q));
-    const matchesTag = params.tag ? item.tags.includes(params.tag) : true;
+    const matchesSearch = item.name.toLowerCase().includes(query.toLowerCase());
+    const matchesTag = tagId
+      ? itemTags.some(j => j.itemId === item.id && j.tagId === tagId)
+      : true;
     const matchesLocation = locationIds ? locationIds.includes(item.locationId) : true;
     return matchesSearch && matchesTag && matchesLocation;
   });
@@ -29,10 +29,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>My Items</Text>
 
-      <Pressable
-        style={styles.manage}
-        onPress={() => router.push('/locations')}
-      >
+      <Pressable style={styles.manage} onPress={() => router.push('/locations')}>
         <Text style={styles.manageText}>Manage Locations</Text>
       </Pressable>
 
@@ -43,7 +40,7 @@ export default function HomeScreen() {
       )}
 
       <TextInput
-        placeholder="Search items or #tags"
+        placeholder="Search items"
         value={query}
         onChangeText={setQuery}
         style={styles.search}
@@ -76,7 +73,7 @@ const styles = StyleSheet.create({
   manage: { backgroundColor: '#e5e7eb', padding: 10, borderRadius: 8, marginBottom: 8 },
   manageText: { fontWeight: '600' },
   search: { backgroundColor: '#fff', padding: 12, borderRadius: 8 },
-  clear: { backgroundColor: '#e5e7eb', padding: 8, borderRadius: 8, marginBottom: 8, marginTop: 8 },
+  clear: { backgroundColor: '#e5e7eb', padding: 8, borderRadius: 8, marginBottom: 8 },
   fab: {
     position: 'absolute',
     bottom: 24,

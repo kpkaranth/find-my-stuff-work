@@ -9,14 +9,14 @@ export function getLocationPath(locationId: string, locations: Location[]): stri
     path.unshift(current.name);
     current = current.parentId ? map.get(current.parentId) : undefined;
   }
+
   return path.join(' > ');
 }
 
 export function getDescendantLocationIds(locationId: string, locations: Location[]): string[] {
   const result: string[] = [locationId];
-  const children = locations.filter(l => l.parentId === locationId);
-  for (const child of children) {
-    result.push(...getDescendantLocationIds(child.id, locations));
-  }
+  locations
+    .filter(l => l.parentId === locationId && !l.isArchived)
+    .forEach(child => result.push(...getDescendantLocationIds(child.id, locations)));
   return result;
 }

@@ -3,7 +3,7 @@ export interface Item {
   name: string;
   locationId: string;
   imageUri: string;
-  notes?: string;
-  tags: string[];
+  notes?: string | null;
   createdAt: string;
+  updatedAt: string;
 }

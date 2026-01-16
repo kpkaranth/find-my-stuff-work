@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 
 const buildTree = (parentId: string | null, depth = 0) =>
   locations
-    .filter(l => l.parentId === parentId)
+    .filter(l => l.parentId === parentId && !l.isArchived)
     .flatMap(l => [
       { ...l, depth },
       ...buildTree(l.id, depth + 1),
@@ -17,7 +17,6 @@ export default function SelectLocationScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select Location</Text>
-
       <FlatList
         data={tree}
         keyExtractor={item => item.id}

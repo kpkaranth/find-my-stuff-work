@@ -3,7 +3,7 @@ import { locations } from '@/store/mockStore';
 
 const buildTree = (parentId: string | null, depth = 0) =>
   locations
-    .filter(l => l.parentId === parentId)
+    .filter(l => l.parentId === parentId && !l.isArchived)
     .flatMap(l => [
       { ...l, depth },
       ...buildTree(l.id, depth + 1),
@@ -15,7 +15,6 @@ export default function LocationsScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Locations</Text>
-
       <FlatList
         data={tree}
         keyExtractor={item => item.id}

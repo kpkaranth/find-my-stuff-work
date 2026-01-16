@@ -1,4 +1,6 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { tags, itemTags } from '@/store/mockStore';
+import { getTagsForItem } from '@/utils/tagUtils';
 
 export default function ItemCard({
   item,
@@ -7,9 +9,12 @@ export default function ItemCard({
   onTagPress,
   onLocationPress,
 }: any) {
+  const resolvedTags = getTagsForItem(item.id, tags, itemTags);
+
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Image source={{ uri: item.imageUri }} style={styles.image} />
+
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{item.name}</Text>
 
@@ -18,9 +23,11 @@ export default function ItemCard({
         </Pressable>
 
         <View style={styles.tags}>
-          {item.tags.map((t: string) => (
-            <Pressable key={t} onPress={() => onTagPress(t)}>
-              <Text style={styles.tag}>#{t}</Text>
+          {resolvedTags.map(tag => (
+            <Pressable key={tag.id} onPress={() => onTagPress(tag.name)}>
+              <Text style={[styles.tag, { color: tag.color ?? '#374151' }]}>
+                #{tag.name}
+              </Text>
             </Pressable>
           ))}
         </View>
@@ -35,5 +42,5 @@ const styles = StyleSheet.create({
   name: { fontSize: 16, fontWeight: '600' },
   location: { color: '#2563eb', marginTop: 4 },
   tags: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 },
-  tag: { marginRight: 8, color: '#374151', fontSize: 12 },
+  tag: { marginRight: 8, fontSize: 12 },
 });
