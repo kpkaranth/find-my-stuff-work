@@ -1,30 +1,46 @@
 import { View, Text, FlatList, StyleSheet, Pressable, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 
 import { items, locations } from '@/store/mockStore';
 import ItemCard from '@/components/ItemCard';
-import { getLocationPath } from '@/utils/locationUtils';
+import { getLocationPath, getDescendantLocationIds } from '@/utils/locationUtils';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ tag?: string; locationId?: string }>();
   const [query, setQuery] = useState('');
+
+  const locationIds = params.locationId
+    ? getDescendantLocationIds(params.locationId, locations)
+    : null;
 
   const filteredItems = items.filter(item => {
     const q = query.toLowerCase();
-    return (
+    const matchesSearch =
       item.name.toLowerCase().includes(q) ||
-      item.tags.some(tag => tag.toLowerCase().includes(q))
-    );
+      item.tags.some(t => t.toLowerCase().includes(q));
+    const matchesTag = params.tag ? item.tags.includes(params.tag) : true;
+    const matchesLocation = locationIds ? locationIds.includes(item.locationId) : true;
+    return matchesSearch && matchesTag && matchesLocation;
   });
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>My Items</Text>
 
-      <Pressable style={styles.manageBtn} onPress={() => router.push('/locations')}>
+      <Pressable
+        style={styles.manage}
+        onPress={() => router.push('/locations')}
+      >
         <Text style={styles.manageText}>Manage Locations</Text>
       </Pressable>
+
+      {(params.tag || params.locationId) && (
+        <Pressable style={styles.clear} onPress={() => router.replace('/')}>
+          <Text>Clear filters</Text>
+        </Pressable>
+      )}
 
       <TextInput
         placeholder="Search items or #tags"
@@ -33,21 +49,19 @@ export default function HomeScreen() {
         style={styles.search}
       />
 
-      {filteredItems.length === 0 ? (
-        <Text style={styles.empty}>No items found. Tap + to add.</Text>
-      ) : (
-        <FlatList
-          data={filteredItems}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ItemCard
-              item={item}
-              locationPath={getLocationPath(item.locationId, locations)}
-              onPress={() => router.push(`/item/${item.id}`)}
-            />
-          )}
-        />
-      )}
+      <FlatList
+        data={filteredItems}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <ItemCard
+            item={item}
+            locationPath={getLocationPath(item.locationId, locations)}
+            onPress={() => router.push(`/item/${item.id}`)}
+            onTagPress={tag => router.push(`/?tag=${tag}`)}
+            onLocationPress={() => router.push(`/?locationId=${item.locationId}`)}
+          />
+        )}
+      />
 
       <Pressable style={styles.fab} onPress={() => router.push('/add-item')}>
         <Text style={styles.fabText}>+</Text>
@@ -59,10 +73,10 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f3f4f6' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
-  manageBtn: { backgroundColor: '#e5e7eb', padding: 10, borderRadius: 8, marginBottom: 10 },
+  manage: { backgroundColor: '#e5e7eb', padding: 10, borderRadius: 8, marginBottom: 8 },
   manageText: { fontWeight: '600' },
-  search: { backgroundColor: '#fff', padding: 12, borderRadius: 8, marginBottom: 12 },
-  empty: { textAlign: 'center', marginTop: 40, color: '#6b7280' },
+  search: { backgroundColor: '#fff', padding: 12, borderRadius: 8 },
+  clear: { backgroundColor: '#e5e7eb', padding: 8, borderRadius: 8, marginBottom: 8, marginTop: 8 },
   fab: {
     position: 'absolute',
     bottom: 24,
